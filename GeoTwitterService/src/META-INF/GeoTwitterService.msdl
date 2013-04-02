@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<msdl:description
+    targetNamespace="http://mobilis.services/GeoTwitterService"
+    xmlns:msdl="http://mobilis.inf.tu-dresden.de/msdl/" 
+    xmlns:xmpp="http://mobilis.inf.tu-dresden.de/xmpp/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:tns="http://auditorium.interface/MobilisAuditorium"
+    xsi:schemaLocation="http://mobilis.inf.tu-dresden.de/msdl/ http://mobilis.inf.tu-dresden.de/msdl.xsd ">
+    
+    <msdl:types>
+    <xs:schema targetNamespace="http://mobilis.services">
+    
+    <xs:element name="createTreasureRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="treasure" type="tns:Treasure" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="createTreasureResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="errortype" type="xs:int" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+
+
+
+			<xs:element name="updateLocation">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="locationBean" type="tns:LocationBean" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="sendTreasureList">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="treasureList" type="tns:Treasure"
+							minOccurs="0" maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+
+			<xs:element name="getTreasureContentRequest">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="databaseID" type="xs:int" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="getTreasureContentResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="content" type="xs:byte" minOccurs="0"
+							maxOccurs="unbounded" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="pushNewTreasure">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="Treasure" type="tns:Treasure" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+
+
+			<!-- The main types are defined below!!!!!!!!!!!!!!!!!!!!! -->
+
+
+
+
+			<xs:complexType name="Treasure">
+				<xs:sequence>
+					<xs:element name="name" type="xs:string" />
+					<xs:element name="author" type="xs:string" />
+					<xs:element name="date" type="xs:string" />
+					<xs:element name="description" type="xs:string" />
+					<xs:element name="location" type="tns:LocationBean" />
+					<xs:element name="databaseID" type="xs:int" />
+					<xs:element name="content" type="xs:byte" minOccurs="0"
+							maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:complexType name="LocationBean">
+				<xs:sequence>
+					<xs:element name="longitude" type="xs:double" />
+					<xs:element name="latitude" type="xs:double" />
+				</xs:sequence>
+			</xs:complexType>
+
+
+		</xs:schema>
+	</msdl:types>
+
+	<msdl:interface name="HSInterface">
+
+
+		<msdl:operation name="createTreasure" pattern="http://www.w3.org/wsdl/in-out">
+			<msdl:input element="tns:createTreasureRequest" />
+			<msdl:output element="tns:createTreasureResponse" />
+		</msdl:operation>
+
+		<msdl:operation name="updateLocation" pattern="http://www.w3.org/wsdl/in-out">
+			<msdl:input element="tns:updateLocation" />
+			<msdl:output element="tns:sendTreasureList" />
+		</msdl:operation>
+
+		<msdl:operation name="getTreasureContent" pattern="http://www.w3.org/wsdl/in-out">
+			<msdl:input element="tns:getTreasureContentRequest" />
+			<msdl:output element="tns:getTreasureContentResponse" />
+		</msdl:operation>
+
+		<msdl:operation name="pushNewTreasure"
+			pattern="http://www.w3.org/ns/wsdl/out-only">
+			<msdl:output element="tns:pushNewTreasure" />
+		</msdl:operation>
+
+
+	</msdl:interface>
+
+	<msdl:binding name="HSBinding" interface="tns:HSInterface"
+		type="http://mobilis.inf.tudresden.de/xmpp/">
+
+
+		<msdl:operation ref="tns:createTreasure" xmpp:ident="mobilis:iq:createtreasure">
+			<msdl:input xmpp:type="set" />
+			<msdl:output xmpp:type="result" />
+		</msdl:operation>
+
+		<msdl:operation ref="tns:updateLocation" xmpp:ident="mobilis:iq:updatelocation">
+			<msdl:input xmpp:type="set" />
+			<msdl:output xmpp:type="result" />
+		</msdl:operation>
+
+		<msdl:operation ref="tns:getTreasureContent" xmpp:ident="mobilis:iq:gettreasurecontent">
+			<msdl:input xmpp:type="set" />
+			<msdl:output xmpp:type="result" />
+		</msdl:operation>
+
+		<msdl:operation ref="tns:pushNewTreasure" xmpp:ident="mobilis:iq:pushnewtreasure">
+			<msdl:output xmpp:type="result" />
+		</msdl:operation>
+
+	</msdl:binding>
+    
+    
+    <msdl:service version="1" name="GeoTwitterService" interface="tns:HSInterface" ident="http://mobilis.services/GeoTwitterService">
+    <msdl:endpoint name="HSEndpoint" binding="tns:HSBinding"/>
+    </msdl:service>
+    
+    
+</msdl:description>
