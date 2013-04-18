@@ -26,6 +26,7 @@ import de.tudresden.mobilis.android.geotwitter.beans.LocationBean;
 import de.tudresden.mobilis.android.geotwitter.beans.Treasure;
 import de.tudresden.mobilis.android.geotwitter.beans.pushNewTreasure;
 import de.tudresden.mobilis.android.geotwitter.beans.updateLocation;
+import de.tudresden.mobilis.android.geotwitter.engine.DatabaseHandler;
 import de.tudresden.mobilis.android.geotwitter.engine.Parser;
 import de.tudresden.mobilis.android.geotwitter.engine.Singleton;
 

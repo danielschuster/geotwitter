@@ -3,13 +3,6 @@ package de.tudresden.mobilis.android.geotwitter.adapters;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.tudresden.mobilis.android.geotwitter.activities.R;
-import de.tudresden.mobilis.android.geotwitter.beans.Treasure;
-
-
-
-
-
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -17,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import de.tudresden.mobilis.android.geotwitter.activities.R;
+import de.tudresden.mobilis.android.geotwitter.beans.Treasure;
 /**
  * ListQuestionAdapter
  * Created on November 18, 2012
@@ -86,6 +81,7 @@ public class ListTreasureAdapter extends BaseAdapter
 		TextView textViewName = (TextView) view.findViewById(R.id.textView_Name);
 		TextView textViewAuthor  = (TextView) view.findViewById(R.id.textView_Author);
 		TextView textViewDate = (TextView) view.findViewById(R.id.textView_Date);
+		TextView textViewDistance = (TextView) view.findViewById(R.id.textView_Distance);
 		
 		//get the specific element from the list
 		Treasure questionInList = questionsList.get(position);
@@ -93,6 +89,7 @@ public class ListTreasureAdapter extends BaseAdapter
 		textViewName.setText(questionInList.getName());
 		textViewAuthor.setText(questionInList.getAuthor());
 		textViewDate.setText(questionInList.getDate());
+		//textViewDistance.setText(distance to treasure);
 		
 		return view;
 	}

@@ -1,25 +1,24 @@
 package de.tudresden.mobilis.android.geotwitter.beans;
 
 import org.xmlpull.v1.XmlPullParser;
-import de.tudresden.inf.rn.mobilis.xmpp.beans.XMPPBean;
+import de.tudresden.inf.rn.mobilis.xmpp.beans.XMPPInfo;
 
 import java.util.List;import java.util.ArrayList;
 
-public class getTreasureContentRequest extends XMPPBean {
+public class TreasureContent implements XMPPInfo {
 
 	private int treasureID = Integer.MIN_VALUE;
+	private String content = null;
 
 
-	public getTreasureContentRequest( int treasureID ) {
+	public TreasureContent( int treasureID, String content ) {
 		super();
 		this.treasureID = treasureID;
-
-		this.setType( XMPPBean.TYPE_SET );
+		this.content = content;
 	}
 
-	public getTreasureContentRequest(){
-		this.setType( XMPPBean.TYPE_SET );
-	}
+	public TreasureContent(){}
+
 
 
 	@Override
@@ -37,8 +36,8 @@ public class getTreasureContentRequest extends XMPPBean {
 				else if (tagName.equals( "treasureID" ) ) {
 					this.treasureID = Integer.parseInt( parser.nextText() );
 				}
-				else if (tagName.equals("error")) {
-					parser = parseErrorAttributes(parser);
+				else if (tagName.equals( "content" ) ) {
+					this.content = parser.nextText();
 				}
 				else
 					parser.next();
@@ -58,14 +57,14 @@ public class getTreasureContentRequest extends XMPPBean {
 		} while (!done);
 	}
 
-	public static final String CHILD_ELEMENT = "getTreasureContentRequest";
+	public static final String CHILD_ELEMENT = "TreasureContent";
 
 	@Override
 	public String getChildElement() {
 		return CHILD_ELEMENT;
 	}
 
-	public static final String NAMESPACE = "mobilis:iq:gettreasurecontent";
+	public static final String NAMESPACE = "http://mobilis.services/GeoTwitterService#type:TreasureContent";
 
 	@Override
 	public String getNamespace() {
@@ -73,25 +72,20 @@ public class getTreasureContentRequest extends XMPPBean {
 	}
 
 	@Override
-	public XMPPBean clone() {
-		getTreasureContentRequest clone = new getTreasureContentRequest( treasureID );
-		clone.cloneBasicAttributes( clone );
-
-		return clone;
-	}
-
-	@Override
-	public String payloadToXML() {
+	public String toXML() {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append( "<treasureID>" )
 			.append( this.treasureID )
 			.append( "</treasureID>" );
 
-		sb = appendErrorPayload(sb);
+		sb.append( "<content>" )
+			.append( this.content )
+			.append( "</content>" );
 
 		return sb.toString();
 	}
+
 
 
 	public int getTreasureID() {
@@ -100,6 +94,14 @@ public class getTreasureContentRequest extends XMPPBean {
 
 	public void setTreasureID( int treasureID ) {
 		this.treasureID = treasureID;
+	}
+
+	public String getContent() {
+		return this.content;
+	}
+
+	public void setContent( String content ) {
+		this.content = content;
 	}
 
 }

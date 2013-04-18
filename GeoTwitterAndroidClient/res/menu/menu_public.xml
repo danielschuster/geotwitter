@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
         android:id="@+id/menu_add_treasure"
         android:icon="@drawable/add_treasure"
-        android:title="Create Treasure"></item>
-      
+        android:title="Create Treasure">
+    </item>
+    <item
+        android:id="@+id/item_Search"
+        android:icon="@drawable/ic_search_blue"
+        android:showAsAction="always"
+        android:title="item_search">
+    </item>
+    
+    <item
+        android:id="@+id/item_ViewSwitch"
+        android:icon="@drawable/ic_list"
+        android:showAsAction="always"
+        android:title="item_search">
+    </item>
+
 </menu>

@@ -2,68 +2,66 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:background="@drawable/activity_background"
+    android:orientation="horizontal" >
 
-	<TableLayout
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    android:layout_alignParentLeft="true"
-	    android:layout_alignParentRight="true" >
+    <ImageView
+        android:id="@+id/imageView_ItemIcon"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignBottom="@+id/textView_Distance"
+        android:adjustViewBounds="false"
+        android:maxWidth="0dp"
+        android:src="@drawable/treasure_closed" />
 
-	    <TableRow
-	        android:id="@+id/tableRow1"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" >
+    <TextView
+        android:id="@+id/textView_Author"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView_Name"
+        android:layout_below="@+id/textView_Name"
+        android:layout_toLeftOf="@+id/textView_Distance"
+        android:layout_weight="0.28"
+        android:text="Author"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#000"
+        android:textSize="12sp"
+        android:textStyle="italic" />
 
-	        <TextView
-	            android:id="@+id/textView_Name"
-	            android:layout_width="98dp"
-	            android:layout_height="wrap_content"
-	            android:layout_marginLeft="10dp"
-	            android:layout_marginRight="10dp"
-	            android:layout_marginTop="10dp"
-	            android:text="Name"
-	            android:textAppearance="?android:attr/textAppearanceMedium"
-	            android:textSize="20sp"
-	            android:textColor="#000"
-	            android:textStyle="bold" />
-	        	
+    <TextView
+        android:id="@+id/textView_Date"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView_Author"
+        android:layout_alignRight="@+id/textView_Author"
+        android:layout_below="@+id/textView_Author"
+        android:text="Date"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#000"
+        android:textSize="12sp"
+        android:textStyle="italic" />
 
-	    </TableRow>
+    <TextView
+        android:id="@+id/textView_Name"
+        android:layout_width="98dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="16dp"
+        android:layout_toLeftOf="@+id/textView_Distance"
+        android:layout_toRightOf="@+id/imageView_ItemIcon"
+        android:text="Name"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#000"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
-	    <TableRow
-	        android:id="@+id/tableRow2"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" >
-
-	        <TextView
-	            android:id="@+id/textView_Author"
-	            android:layout_width="100dp"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="10dp"
-	            android:layout_marginLeft="10dp"
-	            android:layout_marginRight="10dp"
-	            android:layout_weight="0.28"
-	            android:text="Author"
-	            android:textAppearance="?android:attr/textAppearanceLarge"
-	            android:textSize="10sp"
-	            android:textColor="#000"
-	            android:textStyle="italic" />
-
-	        <TextView
-	            android:id="@+id/textView_Date"
-	            android:layout_width="100dp"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="10dp"
-	            android:layout_marginLeft="10dp"
-	            android:layout_marginRight="10dp"
-	            android:text="Date"
-	            android:textAppearance="?android:attr/textAppearanceLarge"
-	            android:textColor="#000"
-	            android:textSize="10sp"
-	            android:textStyle="italic" />
-
-	    </TableRow>
-	</TableLayout>
+    <TextView
+        android:id="@+id/textView_Distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/textView_Date"
+        android:text="TextView"
+        android:textSize="14sp" />
 
 </RelativeLayout>

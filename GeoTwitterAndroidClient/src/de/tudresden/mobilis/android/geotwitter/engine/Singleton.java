@@ -16,6 +16,7 @@ import de.tudresden.inf.rn.mobilis.mxa.callbacks.IXMPPIQCallback;
 import de.tudresden.inf.rn.mobilis.mxa.parcelable.XMPPIQ;
 import de.tudresden.inf.rn.mobilis.xmpp.beans.XMPPBean;
 import de.tudresden.mobilis.android.geotwitter.beans.IGeoTwitterServiceOutgoing;
+import de.tudresden.mobilis.android.geotwitter.beans.Treasure;
 import de.tudresden.mobilis.android.geotwitter.beans.createTreasureResponse;
 import de.tudresden.mobilis.android.geotwitter.beans.getTreasureContentResponse;
 import de.tudresden.mobilis.android.geotwitter.beans.sendTreasureList;
@@ -57,6 +58,7 @@ public class Singleton implements MXAListener {
 	private boolean online = false;
 	private boolean isXMPPConnected = false;
 	public Location currentLocation;
+	public DatabaseHandler db = null;
 
 	public boolean isXMPPConnected(){
 		if(isXMPPConnected==true){
@@ -106,14 +108,18 @@ public class Singleton implements MXAListener {
 				Message m1 = new Message();
 				m1.obj = response;
 				sendToAllHandlers(m1);
+				
 			}
 
 
 			if(b instanceof sendTreasureList){
 				sendTreasureList response = (sendTreasureList)b;
+				db.clearTreasures();
+				for(Treasure treasure:response.getTreasureList()){
+					db.addTreasure(treasure);
+				}
 				Message m1 = new Message();
-				m1.obj = response;
-				m1.what = -88;
+				m1.obj = new String("DatabaseUpdated");
 				sendToAllHandlers(m1);
 			}
 			
