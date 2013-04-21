@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<msdl:description
-    targetNamespace="http://mobilis.services/GeoTwitterService"
-    xmlns:msdl="http://mobilis.inf.tu-dresden.de/msdl/" 
-    xmlns:xmpp="http://mobilis.inf.tu-dresden.de/xmpp/"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:tns="http://auditorium.interface/MobilisAuditorium"
-    xsi:schemaLocation="http://mobilis.inf.tu-dresden.de/msdl/ http://mobilis.inf.tu-dresden.de/msdl.xsd ">
-    
-    <msdl:types>
-    <xs:schema targetNamespace="http://mobilis.services">
-    
-    <xs:element name="createTreasureRequest">
+<msdl:description targetNamespace="http://mobilis.services/GeoTwitterService"
+	xmlns:msdl="http://mobilis.inf.tu-dresden.de/msdl/" xmlns:xmpp="http://mobilis.inf.tu-dresden.de/xmpp/"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:tns="http://auditorium.interface/MobilisAuditorium"
+	xsi:schemaLocation="http://mobilis.inf.tu-dresden.de/msdl/ http://mobilis.inf.tu-dresden.de/msdl.xsd ">
+
+	<msdl:types>
+		<xs:schema targetNamespace="http://mobilis.services">
+
+			<xs:element name="createTreasureRequest">
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element name="treasure" type="tns:Treasure" />
+						<xs:element name="content" type="tns:TreasureContent" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -51,7 +49,7 @@
 			<xs:element name="getTreasureContentRequest">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="databaseID" type="xs:int" />
+						<xs:element name="treasureID" type="xs:int" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -59,8 +57,7 @@
 			<xs:element name="getTreasureContentResponse">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="content" type="xs:byte" minOccurs="0"
-							maxOccurs="unbounded" />
+						<xs:element name="content" type="tns:TreasureContent" />
 					</xs:sequence>
 				</xs:complexType>
 			</xs:element>
@@ -86,9 +83,14 @@
 					<xs:element name="date" type="xs:string" />
 					<xs:element name="description" type="xs:string" />
 					<xs:element name="location" type="tns:LocationBean" />
-					<xs:element name="databaseID" type="xs:int" />
-					<xs:element name="content" type="xs:byte" minOccurs="0"
-							maxOccurs="unbounded" />
+					<xs:element name="treasureID" type="xs:int" />
+				</xs:sequence>
+			</xs:complexType>
+
+			<xs:complexType name="TreasureContent">
+				<xs:sequence>
+					<xs:element name="treasureID" type="xs:int" />
+					<xs:element name="content" type="xs:string" />
 				</xs:sequence>
 			</xs:complexType>
 
@@ -143,7 +145,8 @@
 			<msdl:output xmpp:type="result" />
 		</msdl:operation>
 
-		<msdl:operation ref="tns:getTreasureContent" xmpp:ident="mobilis:iq:gettreasurecontent">
+		<msdl:operation ref="tns:getTreasureContent"
+			xmpp:ident="mobilis:iq:gettreasurecontent">
 			<msdl:input xmpp:type="set" />
 			<msdl:output xmpp:type="result" />
 		</msdl:operation>
@@ -153,11 +156,12 @@
 		</msdl:operation>
 
 	</msdl:binding>
-    
-    
-    <msdl:service version="1" name="GeoTwitterService" interface="tns:HSInterface" ident="http://mobilis.services/GeoTwitterService">
-    <msdl:endpoint name="HSEndpoint" binding="tns:HSBinding"/>
-    </msdl:service>
-    
-    
+
+
+	<msdl:service version="1" name="GeoTwitterService"
+		interface="tns:HSInterface" ident="http://mobilis.services/GeoTwitterService">
+		<msdl:endpoint name="HSEndpoint" binding="tns:HSBinding" />
+	</msdl:service>
+
+
 </msdl:description>

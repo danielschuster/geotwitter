@@ -1,15 +1,10 @@
 package de.tudresden.mobilis.android.geotwitter.activities;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.ArrayList;
-
-import org.jivesoftware.smack.util.Base64;
+import java.io.UnsupportedEncodingException;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import de.tudresden.inf.rn.mobilis.mxa.MXAController;
+import de.tudresden.mobilis.android.geotwitter.beans.LocationBean;
 import de.tudresden.mobilis.android.geotwitter.beans.Treasure;
 import de.tudresden.mobilis.android.geotwitter.beans.TreasureContent;
 import de.tudresden.mobilis.android.geotwitter.beans.createTreasureRequest;
@@ -43,9 +39,7 @@ public class CreateTreasureActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_create_treasure);
-		mSingleton = Singleton.getInstance();
-		mSingleton.mMXAController = MXAController.get();
-		mSingleton.mMXAController.connectMXA(getApplication().getApplicationContext(), mSingleton);
+		mSingleton = Singleton.getInstance();	
 		mSingleton.registerHandler(onReceived);
 		UIInitialization();
 	}
@@ -91,19 +85,37 @@ public class CreateTreasureActivity extends Activity {
 
 
 					try {
+						String buffer = "";;
 						
-						Bitmap bitmap = ((BitmapDrawable)photo.getDrawable()).getBitmap();
+					/*	
+						photo.buildDrawingCache();
+						Bitmap bmp = photo.getDrawingCache();
+						
+						ByteArrayOutputStream stream = new ByteArrayOutputStream();
+						bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+						byte[] byteArray = stream.toByteArray();
+						
+						
+						try {
+							buffer = new String(byteArray,"ISO-8859-1");
+						} catch (UnsupportedEncodingException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}*/
+						
+					/*	Bitmap bitmap = ((BitmapDrawable)photo.getDrawable()).getBitmap();
 						ByteArrayOutputStream stream = new ByteArrayOutputStream();
 						bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-						byte[] bitmapdata = stream.toByteArray();
-						String photoString = Base64.encodeBytes(bitmapdata);
+						byte[] bitmapdata = stream.toByteArray();*/
+				//		String photoString = Base64.encodeBytes(bitmapdata);
 						
 						Treasure treasure = new Treasure();
-						treasure.setAuthor(mSingleton.mMXAController.getXMPPService().getUsername());
+						treasure.setAuthor(mSingleton.xmppS.getUsername());
 						treasure.setName(editName.getText().toString());
 						treasure.setDate(getDateData());
 						treasure.setDescription(editDescription.getText().toString());
-						TreasureContent content = new TreasureContent(0, photoString);
+						treasure.setLocation(new LocationBean(mSingleton.currentLocation.getLongitude(),mSingleton.currentLocation.getLatitude()));
+						TreasureContent content = new TreasureContent(0, treasure.getLocation().toString());
 						createTreasureRequest request = new createTreasureRequest(treasure,content);
 						mSingleton.OutStub.sendXMPPBean(request);
 

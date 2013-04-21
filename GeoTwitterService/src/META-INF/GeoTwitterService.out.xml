@@ -13,4 +13,4 @@ MobilisAuditorium/Service/getTreasureContentRequest.java
 MobilisAuditorium/Service/getTreasureContentResponse.java
 MobilisAuditorium/Service/pushNewTreasure.java
 
-MobilisAuditorium/Service/Treasure.javaMobilisAuditorium/Service/LocationBean.java
+MobilisAuditorium/Service/Treasure.javaMobilisAuditorium/Service/TreasureContent.javaMobilisAuditorium/Service/LocationBean.java

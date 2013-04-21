@@ -1,6 +1,7 @@
 package de.tudresden.mobilis.android.geotwitter.engine;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import de.tudresden.mobilis.android.geotwitter.beans.LocationBean;
@@ -46,11 +47,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		String CREATE_TREASURES_TABLE = "CREATE TABLE " + TABLE_TREASURES + "("
                 + KEY_ID + " INTEGER PRIMARY KEY," + KEY_NAME + " TEXT,"
                 + KEY_AUTHOR + " TEXT," + KEY_DATE + " TEXT," + KEY_DESCRIPTION + " TEXT," 
-                + KEY_LONGITUDE + " TEXT," + KEY_LATITUDE + " TEXT," + ")";
+                + KEY_LONGITUDE + " TEXT," + KEY_LATITUDE + " TEXT" + ")";
         db.execSQL(CREATE_TREASURES_TABLE);
         
         String CREATE_CONTENTS_TABLE = "CREATE TABLE " + TABLE_CONTENTS + "("
-                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_CONTENT + " TEXT," + ")";
+                + KEY_ID + " INTEGER PRIMARY KEY," + KEY_CONTENT + " TEXT" + ")";
         db.execSQL(CREATE_CONTENTS_TABLE);
 		
 	}
@@ -66,18 +67,50 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	
 	public void addTreasure(Treasure treasure) {
 		SQLiteDatabase db = this.getWritableDatabase();
-		 
-	    ContentValues values = new ContentValues();
-	    values.put(KEY_ID, treasure.getTreasureID());
-	    values.put(KEY_NAME, treasure.getName()); // Contact Name
-	    values.put(KEY_AUTHOR, treasure.getAuthor()); // Contact Phone Number
-	    values.put(KEY_DATE, treasure.getDate());
-	    values.put(KEY_DESCRIPTION, treasure.getDescription());
-	    values.put(KEY_LONGITUDE, String.valueOf(treasure.getLocation().getLongitude()));
-	    values.put(KEY_LATITUDE, String.valueOf(treasure.getLocation().getLatitude()));
-	    // Inserting Row
-	    db.insert(TABLE_TREASURES, null, values);
+		
+		Cursor cursor = db.query(TABLE_TREASURES, new String[] { KEY_ID,
+	            KEY_NAME, KEY_AUTHOR, KEY_DATE, KEY_DESCRIPTION, KEY_LONGITUDE, KEY_LATITUDE}, KEY_ID + "=?",
+	            new String[] { String.valueOf(treasure.getTreasureID()) }, null, null, null, null);
+	    if (cursor != null){
+	    	ContentValues values = new ContentValues();
+		    values.put(KEY_ID, treasure.getTreasureID());
+		    values.put(KEY_NAME, treasure.getName()); // Contact Name
+		    values.put(KEY_AUTHOR, treasure.getAuthor()); // Contact Phone Number
+		    values.put(KEY_DATE, treasure.getDate());
+		    values.put(KEY_DESCRIPTION, treasure.getDescription());
+		    values.put(KEY_LONGITUDE, String.valueOf(treasure.getLocation().getLongitude()));
+		    values.put(KEY_LATITUDE, String.valueOf(treasure.getLocation().getLatitude()));
+		    // Inserting Row
+		    db.insert(TABLE_TREASURES, null, values);	
+	    }
 	    db.close(); // Closing database connection
+	}
+	
+	public void addTreasure(List<Treasure> treasureList) {
+		
+		SQLiteDatabase db = this.getWritableDatabase();
+		Iterator<Treasure> iterator = treasureList.iterator();
+		Treasure treasure = null;
+		while(iterator.hasNext()){
+			treasure = iterator.next();
+			Cursor cursor = db.query(TABLE_TREASURES, new String[] { KEY_ID,
+		            KEY_NAME, KEY_AUTHOR, KEY_DATE, KEY_DESCRIPTION, KEY_LONGITUDE, KEY_LATITUDE}, KEY_ID + "=?",
+		            new String[] { String.valueOf(treasure.getTreasureID()) }, null, null, null, null);
+		    if (cursor != null){
+		    	ContentValues values = new ContentValues();
+			    values.put(KEY_ID, treasure.getTreasureID());
+			    values.put(KEY_NAME, treasure.getName()); // Contact Name
+			    values.put(KEY_AUTHOR, treasure.getAuthor()); // Contact Phone Number
+			    values.put(KEY_DATE, treasure.getDate());
+			    values.put(KEY_DESCRIPTION, treasure.getDescription());
+			    values.put(KEY_LONGITUDE, String.valueOf(treasure.getLocation().getLongitude()));
+			    values.put(KEY_LATITUDE, String.valueOf(treasure.getLocation().getLatitude()));
+			    // Inserting Row
+			    db.insert(TABLE_TREASURES, null, values);	
+		    }
+
+		}
+		db.close(); // Closing database connection
 	}
 	 
 	// Getting single contact
@@ -90,7 +123,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	    if (cursor != null)
 	        cursor.moveToFirst();
 	 
-	    Treasure treasure = new Treasure(
+	    		Treasure treasure = new Treasure(
 	    		cursor.getString(1),
 	    		cursor.getString(2),
 	    		cursor.getString(3),

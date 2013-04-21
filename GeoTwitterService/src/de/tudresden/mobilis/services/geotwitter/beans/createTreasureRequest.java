@@ -8,11 +8,13 @@ import java.util.List;import java.util.ArrayList;
 public class createTreasureRequest extends XMPPBean {
 
 	private Treasure treasure = new Treasure();
+	private TreasureContent content = new TreasureContent();
 
 
-	public createTreasureRequest( Treasure treasure ) {
+	public createTreasureRequest( Treasure treasure, TreasureContent content ) {
 		super();
 		this.treasure = treasure;
+		this.content = content;
 
 		this.setType( XMPPBean.TYPE_SET );
 	}
@@ -36,6 +38,9 @@ public class createTreasureRequest extends XMPPBean {
 				}
 				else if (tagName.equals( Treasure.CHILD_ELEMENT ) ) {
 					this.treasure.fromXML( parser );
+				}
+				else if (tagName.equals( TreasureContent.CHILD_ELEMENT ) ) {
+					this.content.fromXML( parser );
 				}
 				else if (tagName.equals("error")) {
 					parser = parseErrorAttributes(parser);
@@ -74,7 +79,7 @@ public class createTreasureRequest extends XMPPBean {
 
 	@Override
 	public XMPPBean clone() {
-		createTreasureRequest clone = new createTreasureRequest( treasure );
+		createTreasureRequest clone = new createTreasureRequest( treasure, content );
 		clone.cloneBasicAttributes( clone );
 
 		return clone;
@@ -88,6 +93,10 @@ public class createTreasureRequest extends XMPPBean {
 			.append( this.treasure.toXML() )
 			.append( "</" + this.treasure.getChildElement() + ">" );
 
+		sb.append( "<" + this.content.getChildElement() + ">" )
+			.append( this.content.toXML() )
+			.append( "</" + this.content.getChildElement() + ">" );
+
 		sb = appendErrorPayload(sb);
 
 		return sb.toString();
@@ -100,6 +109,14 @@ public class createTreasureRequest extends XMPPBean {
 
 	public void setTreasure( Treasure treasure ) {
 		this.treasure = treasure;
+	}
+
+	public TreasureContent getContent() {
+		return this.content;
+	}
+
+	public void setContent( TreasureContent content ) {
+		this.content = content;
 	}
 
 }

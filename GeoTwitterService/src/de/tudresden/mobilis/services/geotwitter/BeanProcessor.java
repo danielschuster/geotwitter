@@ -9,34 +9,28 @@ import de.tudresden.mobilis.services.geotwitter.beans.*;
 
 public class BeanProcessor {
 
-	public BeanProcessor(){}
+	public BeanProcessor(Database db){
+		this.DB = db;
+	}
+	
+	Database DB;
+	
+	
 
 	public createTreasureResponse processCreateTreasureRequest(createTreasureRequest bean){
-		
-		Random r = new Random();
-		int key;
-		do{
-			key = r.nextInt();
-		}while(Database.TDB.containsKey(key)||(key<0));
-		Treasure treasure = bean.getTreasure();
-		treasure.setDatabaseID(key);
-		Database.TDB.put(key, treasure);
-		return new createTreasureResponse(key);
+			
+		int response = DB.addTreasure(bean.getTreasure());
+		DB.addTreasureContent(bean.getContent(), response);
+		return new createTreasureResponse(response);
 	}
+	
 
 	public getTreasureContentResponse processgetTreasureContentRequest(getTreasureContentRequest request) {
-		
-
-			return new getTreasureContentResponse();
-		
-		
+			return new getTreasureContentResponse(DB.getTreasureContent(request.getTreasureID()));
 	}
 
 	public sendTreasureList processUpdateLocation(updateLocation request) {
-		
-		
-		List<Treasure> treasures = new ArrayList<Treasure>(Database.TDB.values());
-		return new sendTreasureList(treasures);
+		return new sendTreasureList(DB.getTreasureList());
 	}
 
 }

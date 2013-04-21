@@ -26,26 +26,6 @@
         android:textSize="22sp" />
 
     <TextView
-        android:id="@+id/textView_Distance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/imageView1"
-        android:layout_marginLeft="27dp"
-        android:layout_marginTop="26dp"
-        android:text="Distance"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/textView_Author"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView_Distance"
-        android:layout_marginLeft="27dp"
-        android:text="Author" />
-
-    <TextView
         android:id="@+id/textView_Date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,37 +50,45 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView_Date"
-        android:layout_alignRight="@+id/ImageView02"
         android:layout_below="@+id/imageView_Content"
         android:layout_marginTop="25dp"
         android:text="Description" />
-
-    <ImageView
-        android:id="@+id/ImageView02"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignTop="@+id/textView_Distance"
-        android:layout_marginRight="21dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/favourites_selected_png" />
-
-    <ImageView
-        android:id="@+id/ImageView03"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/ImageView02"
-        android:layout_below="@+id/ImageView02"
-        android:scaleType="fitXY"
-        android:src="@drawable/ic_map_transp" />
 
     <ImageView
         android:id="@+id/imageView_Content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView_Description"
-        android:layout_alignRight="@+id/ImageView02"
         android:layout_centerVertical="true"
         android:src="@drawable/add_treasure" />
+
+    <TextView
+        android:id="@+id/textView_Distance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView_Author"
+        android:layout_below="@+id/imageView1"
+        android:layout_marginTop="17dp"
+        android:text="Distance"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/textView_Author"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView_Date"
+        android:layout_below="@+id/textView_Distance"
+        android:layout_marginTop="23dp"
+        android:text="Author" />
+
+    <ImageButton
+        android:id="@+id/imageButton_Map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView_Distance"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="21dp"
+        android:background="@null"
+        android:src="@drawable/ic_map_transp" />
 
 </RelativeLayout>

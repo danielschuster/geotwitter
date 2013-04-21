@@ -7,14 +7,12 @@ import java.util.List;import java.util.ArrayList;
 
 public class getTreasureContentResponse extends XMPPBean {
 
-	private List< Byte > content = new ArrayList< Byte >();
+	private TreasureContent content = new TreasureContent();
 
 
-	public getTreasureContentResponse( List< Byte > content ) {
+	public getTreasureContentResponse( TreasureContent content ) {
 		super();
-		for ( byte entity : content ) {
-			this.content.add( entity );
-		}
+		this.content = content;
 
 		this.setType( XMPPBean.TYPE_RESULT );
 	}
@@ -36,8 +34,8 @@ public class getTreasureContentResponse extends XMPPBean {
 				if (tagName.equals(getChildElement())) {
 					parser.next();
 				}
-				else if (tagName.equals( "content" ) ) {
-					content.add( Byte.parseByte( parser.nextText() ) );
+				else if (tagName.equals( TreasureContent.CHILD_ELEMENT ) ) {
+					this.content.fromXML( parser );
 				}
 				else if (tagName.equals("error")) {
 					parser = parseErrorAttributes(parser);
@@ -86,11 +84,9 @@ public class getTreasureContentResponse extends XMPPBean {
 	public String payloadToXML() {
 		StringBuilder sb = new StringBuilder();
 
-		for( byte entry : content ) {
-			sb.append( "<content>" );
-			sb.append( entry );
-			sb.append( "</content>" );
-		}
+		sb.append( "<" + this.content.getChildElement() + ">" )
+			.append( this.content.toXML() )
+			.append( "</" + this.content.getChildElement() + ">" );
 
 		sb = appendErrorPayload(sb);
 
@@ -98,11 +94,11 @@ public class getTreasureContentResponse extends XMPPBean {
 	}
 
 
-	public List< Byte > getContent() {
+	public TreasureContent getContent() {
 		return this.content;
 	}
 
-	public void setContent( List< Byte > content ) {
+	public void setContent( TreasureContent content ) {
 		this.content = content;
 	}
 

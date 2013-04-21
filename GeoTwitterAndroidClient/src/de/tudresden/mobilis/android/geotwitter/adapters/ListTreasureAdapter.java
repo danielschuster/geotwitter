@@ -5,6 +5,8 @@ import java.util.List;
 
 
 import android.content.Context;
+import android.location.Location;
+import android.location.LocationProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import de.tudresden.mobilis.android.geotwitter.activities.R;
 import de.tudresden.mobilis.android.geotwitter.beans.Treasure;
+import de.tudresden.mobilis.android.geotwitter.engine.Singleton;
 /**
  * ListQuestionAdapter
  * Created on November 18, 2012
@@ -25,6 +28,7 @@ public class ListTreasureAdapter extends BaseAdapter
 	List<Treasure> questionsList = new ArrayList<Treasure>();
 	Context context = null;
 	int layoutId;
+	Singleton mSingleton;
 	/**
 	 * Constructor with parameters used by the Adapter.
 	 * @param context Context
@@ -35,6 +39,7 @@ public class ListTreasureAdapter extends BaseAdapter
 		this.context = context;
 		this.questionsList = items;
 		this.layoutId = layoutId;
+		mSingleton = Singleton.getInstance();
 	}
 	/**
 	 * Default method in which is returned the number of element in list.
@@ -89,8 +94,7 @@ public class ListTreasureAdapter extends BaseAdapter
 		textViewName.setText(questionInList.getName());
 		textViewAuthor.setText(questionInList.getAuthor());
 		textViewDate.setText(questionInList.getDate());
-		//textViewDistance.setText(distance to treasure);
-		
+		textViewDistance.setText(mSingleton.distanceCalculation(questionInList));
 		return view;
 	}
 }

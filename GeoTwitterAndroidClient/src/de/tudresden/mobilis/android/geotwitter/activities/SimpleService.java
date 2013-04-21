@@ -15,9 +15,12 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
 import android.widget.Toast;
+import de.tudresden.inf.rn.mobilis.mxa.IXMPPService;
+import de.tudresden.inf.rn.mobilis.mxa.MXAController;
 import de.tudresden.inf.rn.mobilis.mxa.MXAListener;
 import de.tudresden.inf.rn.mobilis.mxa.callbacks.IXMPPIQCallback;
 import de.tudresden.inf.rn.mobilis.mxa.parcelable.XMPPIQ;
@@ -67,13 +70,13 @@ public class SimpleService extends Service implements LocationListener, MXAListe
 	}
 
 
-
-
 	@Override
 	public void onCreate() {
 		super.onCreate();
 		mSingleton = Singleton.getInstance();
-		mSingleton.mMXAController.get().connectMXA(getApplicationContext(), this);
+	//	mSingleton.mMXAController = MXAController.get();
+	//	mSingleton.mMXAController.connectMXA(getApplication().getBaseContext(), this);
+
 		locationListenerInitialization();
 	}
 
@@ -83,19 +86,19 @@ public class SimpleService extends Service implements LocationListener, MXAListe
 		c.setAccuracy(Criteria.ACCURACY_LOW);
 		String providerName=aLocationManager.getBestProvider(c,true);
 		aLocationManager.requestLocationUpdates(providerName, 0, 0, this);
-		//mSingleton.currentLocation = aLocationManager.getLastKnownLocation(providerName);
+		mSingleton.currentLocation = aLocationManager.getLastKnownLocation(providerName);
 		TimerTask firstTask = new TimerTask() {
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
 
-				//	if(mSingleton.currentLocation!=null){
-				{
+					if(mSingleton.currentLocation!=null){
+				
 					LocationBean bean = new LocationBean();
-					//					bean.setLatitude(mSingleton.currentLocation.getLatitude());
-					//					bean.setLongitude(mSingleton.currentLocation.getLongitude());
-					bean.setLatitude(1.0);
-					bean.setLongitude(1.0);
+										bean.setLatitude(mSingleton.currentLocation.getLatitude());
+										bean.setLongitude(mSingleton.currentLocation.getLongitude());
+					//bean.setLatitude(1.0);
+					//bean.setLongitude(1.0);
 					mSingleton.OutStub.sendXMPPBean(new updateLocation(bean));
 				}
 

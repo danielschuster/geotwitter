@@ -30,36 +30,28 @@ public class GeoTwitter extends MobilisService  {
 	private GeoTwitterServiceProxy _proxy;
 	private DoubleKeyMap< String, String, XMPPBean > _beanPrototypes
 	= new DoubleKeyMap< String, String, XMPPBean >( false );
-	private BeanProcessor beanProcessor = new BeanProcessor();
+	
+	public Database DB;
+	private BeanProcessor beanProcessor;
 	private Timer timer;
 	private Date time;
 
 	public GeoTwitter(){
 		_proxy = new GeoTwitterServiceProxy(IGeoTwitterServiceOutgoingStub);
+		DB = new Database();
+		beanProcessor = new BeanProcessor(DB);
 		time = new Date();
 		timer = new Timer();
-	/*	TimerTask task = new TimerTask() {
+		TimerTask task = new TimerTask() {
 
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				synchronized (Database.ODB) {
-					Iterator<User> iterator = Database.ODB.values().iterator();
-					Date current = new Date();
-					while(iterator.hasNext()){
-						User user = iterator.next();
-						if(current.after(user.time)){
-							if(Math.abs(current.getMinutes()-user.time.getMinutes())>1){
-								Database.ODB.remove(user.jid);
-							}
-
-						}
-
-					}	
-				}
+				DB.clearOnlineUserList();
+				getAgent().getConnection().sendPacket(new BeanIQAdapter(new sendTreasureList()));
 			}
 		};
-		timer.schedule(task, 1000, 5000);*/
+	//	timer.schedule(task, 1000, 5000);
 
 	}
 
@@ -70,6 +62,13 @@ public class GeoTwitter extends MobilisService  {
 			// TODO Auto-generated method stub
 			getAgent().getConnection().sendPacket(new BeanIQAdapter(out));
 
+		}
+
+		@Override
+		public void sendXMPPBean(XMPPBean out,
+				IXMPPCallback<? extends XMPPBean> callback) {
+			// TODO Auto-generated method stub
+			
 		}
 
 	};
@@ -111,11 +110,11 @@ public class GeoTwitter extends MobilisService  {
 						response.setFrom(getAgent().getJid());
 						_proxy.getBindingStub().sendXMPPBean(response);
 						if(response.getErrortype()>0){
-							Iterator<String> it = Database.ODB.keySet().iterator();
+							Iterator<User> it = DB.getOnlineUserList().iterator();
 							Treasure treasure = request.getTreasure();
-							treasure.setDatabaseID(response.getErrortype());
+							treasure.setTreasureID(response.getErrortype());
 							while(it.hasNext()){
-								String jid = it.next();
+								String jid = it.next().jid;
 								if(!jid.equals(request.getFrom())){
 									pushNewTreasure bean = new pushNewTreasure(treasure);
 									bean.setTo(jid);
@@ -139,12 +138,7 @@ public class GeoTwitter extends MobilisService  {
 						response.setTo(request.getFrom());
 						response.setFrom(getAgent().getJid());
 						_proxy.getBindingStub().sendXMPPBean(response);
-						if(!Database.ODB.containsKey(request.getFrom())){
-							User user = new User();
-							user.jid = request.getFrom();
-							user.time = new Date();
-							Database.ODB.put(request.getFrom(), user);
-						}
+						DB.addUserToOnlineList(request.getFrom());
 					}
 				}
 			}

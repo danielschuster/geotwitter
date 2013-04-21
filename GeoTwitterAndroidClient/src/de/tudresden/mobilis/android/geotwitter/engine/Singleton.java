@@ -3,12 +3,16 @@ package de.tudresden.mobilis.android.geotwitter.engine;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import android.content.Context;
 import android.location.Location;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.util.Log;
+import android.location.Geocoder;
 import de.tudresden.inf.rn.mobilis.mxa.IXMPPService;
 import de.tudresden.inf.rn.mobilis.mxa.MXAController;
 import de.tudresden.inf.rn.mobilis.mxa.MXAListener;
@@ -28,7 +32,7 @@ public class Singleton implements MXAListener {
 		
 	}
 
-	private ArrayList<Handler> handlerList = new ArrayList<Handler>();
+	private static ArrayList<Handler> handlerList = new ArrayList<Handler>();
 
 	public void registerHandler(Handler handler){
 		if(!handlerList.contains(handler)){
@@ -52,13 +56,12 @@ public class Singleton implements MXAListener {
 	}
 
 
-	public MXAController mMXAController = null;
+	public static MXAController mMXAController = null;
 	public static IXMPPService xmppS = null;
 	public static IXMPPService xmppC = null;
-	private boolean online = false;
 	private boolean isXMPPConnected = false;
-	public Location currentLocation;
-	public DatabaseHandler db = null;
+	public static Location currentLocation;
+	private static  DatabaseHandler db = null;
 
 	public boolean isXMPPConnected(){
 		if(isXMPPConnected==true){
@@ -66,6 +69,22 @@ public class Singleton implements MXAListener {
 			return true;
 		}
 		return false;
+	}
+	
+	public synchronized DatabaseHandler openDatabase(){
+		if(db!=null)
+			return db;
+		return null;	
+	}
+	
+	public void createDatabase(Context context){
+		db = new DatabaseHandler(context);
+	}
+	
+	public LatLng getCurrentLocation(){
+		if(currentLocation!=null)
+			return new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+		return null;
 	}
 
 
@@ -105,6 +124,7 @@ public class Singleton implements MXAListener {
 
 			if(b instanceof getTreasureContentResponse){
 				getTreasureContentResponse response = (getTreasureContentResponse)b;
+				Log.i("Singleton!!!!", response.getContent().getContent());
 				Message m1 = new Message();
 				m1.obj = response;
 				sendToAllHandlers(m1);
@@ -125,12 +145,25 @@ public class Singleton implements MXAListener {
 			
 		
 		}
-
-
-
-
-
+		
+	
 	};
+	
+	public String distanceCalculation(Treasure treasure){
+		Location treasureLocation = new Location("TreasureLocation");
+		treasureLocation.setLatitude(treasure.getLocation().getLatitude());
+		treasureLocation.setLongitude(treasure.getLocation().getLongitude());
+		float calculated = currentLocation.distanceTo(treasureLocation);
+	//	int meters = Math.round(calculated);
+		if(calculated<1000){
+			return Math.round(calculated)+" m";
+		}else{
+			return String.format("%.2f", calculated/1000)+" km";
+		}
+	
+	}
+	
+	
 
 	public IGeoTwitterServiceOutgoing OutStub = new IGeoTwitterServiceOutgoing(){
 

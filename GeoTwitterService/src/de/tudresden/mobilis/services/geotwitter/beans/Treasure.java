@@ -12,21 +12,17 @@ public class Treasure implements XMPPInfo {
 	private String date = null;
 	private String description = null;
 	private LocationBean location = new LocationBean();
-	private int databaseID = Integer.MIN_VALUE;
-	private List< Byte > content = new ArrayList< Byte >();
+	private int treasureID = Integer.MIN_VALUE;
 
 
-	public Treasure( String name, String author, String date, String description, LocationBean location, int databaseID, List< Byte > content ) {
+	public Treasure( String name, String author, String date, String description, LocationBean location, int treasureID ) {
 		super();
 		this.name = name;
 		this.author = author;
 		this.date = date;
 		this.description = description;
 		this.location = location;
-		this.databaseID = databaseID;
-		for ( byte entity : content ) {
-			this.content.add( entity );
-		}
+		this.treasureID = treasureID;
 	}
 
 	public Treasure(){}
@@ -60,11 +56,8 @@ public class Treasure implements XMPPInfo {
 				else if (tagName.equals( LocationBean.CHILD_ELEMENT ) ) {
 					this.location.fromXML( parser );
 				}
-				else if (tagName.equals( "databaseID" ) ) {
-					this.databaseID = Integer.parseInt( parser.nextText() );
-				}
-				else if (tagName.equals( "content" ) ) {
-					content.add( Byte.parseByte( parser.nextText() ) );
+				else if (tagName.equals( "treasureID" ) ) {
+					this.treasureID = Integer.parseInt( parser.nextText() );
 				}
 				else
 					parser.next();
@@ -122,15 +115,9 @@ public class Treasure implements XMPPInfo {
 			.append( this.location.toXML() )
 			.append( "</" + this.location.getChildElement() + ">" );
 
-		sb.append( "<databaseID>" )
-			.append( this.databaseID )
-			.append( "</databaseID>" );
-
-		for( byte entry : content ) {
-			sb.append( "<content>" );
-			sb.append( entry );
-			sb.append( "</content>" );
-		}
+		sb.append( "<treasureID>" )
+			.append( this.treasureID )
+			.append( "</treasureID>" );
 
 		return sb.toString();
 	}
@@ -177,20 +164,12 @@ public class Treasure implements XMPPInfo {
 		this.location = location;
 	}
 
-	public int getDatabaseID() {
-		return this.databaseID;
+	public int getTreasureID() {
+		return this.treasureID;
 	}
 
-	public void setDatabaseID( int databaseID ) {
-		this.databaseID = databaseID;
-	}
-
-	public List< Byte > getContent() {
-		return this.content;
-	}
-
-	public void setContent( List< Byte > content ) {
-		this.content = content;
+	public void setTreasureID( int treasureID ) {
+		this.treasureID = treasureID;
 	}
 
 }
