@@ -1,35 +1,41 @@
 package de.tudresden.mobilis.android.geotwitter.activities;
 
 
-import java.io.UnsupportedEncodingException;
-
-import org.jivesoftware.smack.util.Base64;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.database.ContentObserver;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import de.tudresden.inf.rn.mobilis.mxa.MXAController;
+
+import com.google.android.gms.maps.model.LatLng;
+
+import de.tudresden.inf.rn.mobilis.mxa.ConstMXA.RosterItems;
 import de.tudresden.mobilis.android.geotwitter.beans.Treasure;
 import de.tudresden.mobilis.android.geotwitter.beans.TreasureContent;
 import de.tudresden.mobilis.android.geotwitter.beans.getTreasureContentRequest;
 import de.tudresden.mobilis.android.geotwitter.beans.getTreasureContentResponse;
-import de.tudresden.mobilis.android.geotwitter.engine.Singleton;
+import de.tudresden.mobilis.android.geotwitter.engine.GeoTwitterManager;
+import de.tudresden.mobilis.android.geotwitter.helper.CameraHelper;
+
+/**
+ * 
+ * @author Marian Seliuchenko
+ *
+ */
 
 public class ShowTreasureActivity extends Activity {
 
@@ -39,118 +45,217 @@ public class ShowTreasureActivity extends Activity {
 	TextView textView_Author;
 	TextView textView_Description;
 	TextView textView_Distance;
+	TextView textView_Address;
 	ImageView photo;
 	ImageButton imageButton_Map;
+	ImageButton imageButton_AuthorState;
+	
 	TreasureContent content;
-
-
-
-	Singleton mSingleton;
+	private Cursor cursor;
+	String userMode;
+	GeoTwitterManager mGeoTwitterManager;
 	Treasure treasure;
-	ActionBar ab;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_show_treasure);
-		mSingleton = Singleton.getInstance();
-	//	mSingleton.mMXAController = MXAController.get();
-	//	mSingleton.mMXAController.connectMXA(getApplication().getApplicationContext(), mSingleton);
-		Bundle extras = getIntent().getExtras();
-		treasure = (Treasure) extras.get("TreasureSelected");
-		UIInitialization();
-	//	content = mSingleton.db.getTreasureContent(treasure.getTreasureID());
-	//	if(content==null){
-			
-	//	}else{
-	//		refreshTreasureContent();
-	//	}
+		mGeoTwitterManager = GeoTwitterManager.getInstance();
 
+		if(savedInstanceState==null){
+			Bundle extras = getIntent().getExtras();
+			treasure = (Treasure) extras.get("TreasureSelected");
+		}else{
+			if(savedInstanceState.containsKey("treasure")){
+				this.treasure = (Treasure)savedInstanceState.get("treasure");
+			}
+		}
+		UIInitialization();
+		TreasureContent tc = mGeoTwitterManager.openDatabase().getTreasureContent(treasure.getTreasureID());
+		if(tc==null){
+			mGeoTwitterManager.OutStub.sendXMPPBean(new getTreasureContentRequest(treasure.getTreasureID()));
+		}else{
+			refreshImage(tc.getContent());
+		}
 	}
-	
-	@Override
-	public void onResume(){
-		super.onResume();
-		mSingleton.registerHandler(onReceivedShowTreasure);
-		mSingleton.OutStub.sendXMPPBean(new getTreasureContentRequest(treasure.getTreasureID()));
-	}
-	
-	@Override
-	public void onPause(){
-		super.onPause();
-		mSingleton.unRegisterHandler(onReceivedShowTreasure);
-	}
+
 
 	private Handler onReceivedShowTreasure = new Handler(){
 		@Override
 		public void handleMessage(Message msg){
-			Log.i("ShowTreasureActivity", "Message came!" );
+
 
 			if (msg.obj instanceof getTreasureContentResponse){
-				Log.i("ShowTreasureActivity", "Message is response!" );
-				Log.i("ShowTreasureActivity","Animation canceled!" );
 				getTreasureContentResponse response = (getTreasureContentResponse)msg.obj;
-				try{
-				/*	byte[] byteArray1;;
-					try {
-						byteArray1 = response.getContent().getContent().getBytes("ISO-8859-1");
-						Bitmap bmp1 = BitmapFactory.decodeByteArray(byteArray1, 0, byteArray1.length);
-						photo.setImageBitmap(bmp1);
-					} catch (UnsupportedEncodingException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}*/
-					Toast.makeText(getApplicationContext(), response.getContent().getContent(), Toast.LENGTH_SHORT).show();
-				}catch(Exception e){
-					Toast.makeText(getApplicationContext(), "Unable to download picture!", Toast.LENGTH_SHORT).show();
+				if(!response.getContent().getContent().equals("")){
+					if(refreshImage(response.getContent().getContent())){
+						mGeoTwitterManager.openDatabase().addTreasureContent(response.getContent());	
+					}
 				}
 			}
 			if(msg.obj instanceof String){
 				if(msg.obj.equals("DatabaseUpdated")){
-					textView_Distance.setText(mSingleton.distanceCalculation(treasure));
+					textView_Distance.setText(mGeoTwitterManager.distanceCalculation(treasure));
 				}
 			}
 		}
 	};
 
-	
+	public boolean refreshImage(String str){
+		try{
+			image.setImageBitmap(CameraHelper.convertStringToBitmap(str));
+			return true;
+		}catch(Exception e){
+			Toast.makeText(getApplicationContext(), "Unable to show picture!", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+
 	public void UIInitialization(){
 		image = (ImageView)findViewById(R.id.imageView_Content);
 		textView_Name = (TextView)findViewById(R.id.textView_Name);
-		textView_Date = (TextView)findViewById(R.id.textView_Date);
-		textView_Author = (TextView)findViewById(R.id.textView_Author);
+		textView_Date = (TextView)findViewById(R.id.textView_DateTD);
+		textView_Author = (TextView)findViewById(R.id.textView_AuthorTD);
 		textView_Description = (TextView)findViewById(R.id.textView_Description);
 		textView_Distance = (TextView)findViewById(R.id.textView_Distance);
 		imageButton_Map = (ImageButton)findViewById(R.id.imageButton_Map);
 		textView_Name.setText(treasure.getName());
-		textView_Author.setText(treasure.getAuthor());
-		textView_Date.setText(treasure.getDate());
+		String author = treasure.getAuthor();
+		Log.i("ShowTreasure", author);
+		textView_Author.setText(author);
+		String date = treasure.getDate();
+		Log.i("ShowTreasure", date);
+		textView_Date.setText(date);
 		textView_Description.setText(treasure.getDescription());
-		textView_Distance.setText(mSingleton.distanceCalculation(treasure));
-		
-		imageButton_Map.setOnClickListener(new View.OnClickListener() {
-			
+		if(mGeoTwitterManager.getCurrentLocation()!=null){
+			textView_Distance.setText(mGeoTwitterManager.distanceCalculation(treasure));
+		}else{
+			textView_Distance.setText("Your current location is unavailable!");
+		}
+		textView_Address = (TextView)findViewById(R.id.textView_Address);
+		textView_Address.setText(mGeoTwitterManager.ConvertPointToLocation(getApplicationContext(), 
+				new LatLng(treasure.getLocation().getLatitude(),treasure.getLocation().getLongitude())));
+		imageButton_AuthorState = (ImageButton)findViewById(R.id.ImageButton_AuthorState);
+	imageButton_AuthorState.setOnClickListener(new View.OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				Intent intent = new Intent(ShowTreasureActivity.this, MapActivity.class);
-				intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-				intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				intent.putExtra("TreasureToPointOn", treasure);
-				startActivity(intent);
-				finish();
+				if(userMode.equals(RosterItems.MODE_AVAILABLE)){
+					startActivity(new Intent(ShowTreasureActivity.this,ChatActivity.class).putExtra("partnerJID", "mobilis@marchello-pc/"+treasure.getAuthor()));
+					finish();
+				}else{
+					Toast.makeText(getApplicationContext(), "User is not available at the moment!", Toast.LENGTH_SHORT).show();
+				}
+				
 			}
 		});
-		/*	
-		ab = getActionBar();
-		ab.setDisplayShowCustomEnabled(true);
-		ab.setDisplayShowTitleEnabled(true);
-		ab.setDisplayShowHomeEnabled(true);
-		ab.setHomeButtonEnabled(true);
-		ab.setIcon(R.drawable.ic_treasure);
-		ab.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_background));
-		ab.setTitle("Treasure details");
-		 */	
+		imageButton_Map.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				if(event.getActionMasked()==MotionEvent.ACTION_DOWN){
+					imageButton_Map.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_transp_down));
+				}
+				if(event.getActionMasked()==MotionEvent.ACTION_UP){
+					imageButton_Map.setImageBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.ic_map_transp));
+					Intent intent = new Intent(ShowTreasureActivity.this, MapActivity.class);
+					intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+					intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+					intent.putExtra("TreasureToPointOn", treasure);
+					startActivity(intent);
+					finish();
+				}
+				return true;
+			}
+		});
+	}
+	
+	
+	class UserStateObserver extends ContentObserver{
+		public UserStateObserver(Handler handler) {
+			super(handler);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public void onChange(boolean selfChange) {
+			// TODO Auto-generated method stub
+			super.onChange(selfChange);
+			onCursorChanged.sendEmptyMessage(0);
+
+		}
+
+	}
+
+	private Handler onCursorChanged = new Handler(){
+		@Override
+		public void handleMessage(Message msg){
+			refreshUserStateList(treasure.getAuthor());
+		}
+	};
+	
+	private void refreshUserStateList(String resource) {
+		cursor= getContentResolver().query(RosterItems.CONTENT_URI,null, null,
+				null, RosterItems.XMPP_ID+" ASC, "+RosterItems.RESSOURCE+" ASC");
+				startManagingCursor(cursor);
+		if(cursor!=null){
+			if(cursor.moveToFirst()){
+				do{
+					if(cursor.getString(cursor.getColumnIndex(RosterItems.RESSOURCE)).equals(treasure.getAuthor())){
+						Log.i("SHOW", "SPIVPALO: "+cursor.getString(cursor.getColumnIndex(RosterItems.RESSOURCE)));
+						Log.i("SHOW", "SPIVPALO: "+cursor.getString(cursor.getColumnIndex(RosterItems.PRESENCE_MODE)));
+						userMode=cursor.getString(cursor.getColumnIndex(RosterItems.PRESENCE_MODE));
+						
+						if (userMode.equals(RosterItems.MODE_UNAVAILABLE))
+							imageButton_AuthorState.setImageResource(R.drawable.offline);
+						else if (userMode.equals(RosterItems.MODE_AVAILABLE))
+							imageButton_AuthorState.setImageResource(R.drawable.available);
+						else if (userMode.equals(RosterItems.MODE_CHAT))
+							imageButton_AuthorState.setImageResource(R.drawable.chat);
+						else if (userMode.equals(RosterItems.MODE_AWAY))
+							imageButton_AuthorState.setImageResource(R.drawable.away);
+						else if (userMode.equals(RosterItems.MODE_DO_NOT_DISTURB))
+							imageButton_AuthorState.setImageResource(R.drawable.busy);
+						else if (userMode.equals(RosterItems.MODE_EXTENDED_AWAY))
+							imageButton_AuthorState.setImageResource(R.drawable.extended_away);
+						break;
+					}else{
+						userMode = RosterItems.MODE_UNAVAILABLE;
+						imageButton_AuthorState.setImageResource(R.drawable.offline);
+					}
+				}while(cursor.moveToNext());
+			}
+		}
+	}
+	
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		mGeoTwitterManager.registerHandler(onReceivedShowTreasure);
+		refreshUserStateList(treasure.getAuthor());
+		UserStateObserver mObserver = new UserStateObserver(onCursorChanged);
+		getContentResolver().registerContentObserver(RosterItems.CONTENT_URI, true, mObserver);
+		startManagingCursor(cursor);
+
+	}
+
+	@Override
+	public void onPause(){
+		super.onPause();
+		mGeoTwitterManager.unRegisterHandler(onReceivedShowTreasure);
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		outState.putBoolean("RestartedDueToConfigurationChanges", true);
+		outState.putSerializable("treasure", treasure);
 	}
 
 
@@ -159,14 +264,11 @@ public class ShowTreasureActivity extends Activity {
 	{
 		if ((keyCode == KeyEvent.KEYCODE_BACK))
 		{
-			mSingleton.unRegisterHandler(onReceivedShowTreasure);
+			mGeoTwitterManager.unRegisterHandler(onReceivedShowTreasure);
 			finish();
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-
-
-
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {

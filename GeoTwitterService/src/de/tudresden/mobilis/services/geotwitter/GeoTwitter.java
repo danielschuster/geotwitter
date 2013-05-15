@@ -1,12 +1,5 @@
-/**
- * This class realizes the logic of MobileAuditorium web-service. 
- * @author MARCHELLO, Marian Seliuchenko, egur2006@yandex.ru, last modified: 24.01.2013
- */
-
 package de.tudresden.mobilis.services.geotwitter;
 
-import java.util.Date;
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -14,6 +7,7 @@ import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Packet;
+import org.jivesoftware.smackx.filetransfer.FileTransferManager;
 
 import de.tudresden.inf.rn.mobilis.server.services.MobilisService;
 import de.tudresden.inf.rn.mobilis.xmpp.beans.ProxyBean;
@@ -21,39 +15,58 @@ import de.tudresden.inf.rn.mobilis.xmpp.beans.XMPPBean;
 import de.tudresden.inf.rn.mobilis.xmpp.beans.helper.DoubleKeyMap;
 import de.tudresden.inf.rn.mobilis.xmpp.server.BeanIQAdapter;
 import de.tudresden.inf.rn.mobilis.xmpp.server.BeanProviderAdapter;
-import de.tudresden.mobilis.services.geotwitter.BeanProcessor;
-import de.tudresden.mobilis.services.geotwitter.beans.*;
+import de.tudresden.mobilis.services.geotwitter.beans.GeoTwitterServiceProxy;
+import de.tudresden.mobilis.services.geotwitter.beans.IGeoTwitterServiceOutgoing;
+import de.tudresden.mobilis.services.geotwitter.beans.IXMPPCallback;
+import de.tudresden.mobilis.services.geotwitter.beans.createTreasureRequest;
+import de.tudresden.mobilis.services.geotwitter.beans.createTreasureResponse;
+import de.tudresden.mobilis.services.geotwitter.beans.getTreasureContentRequest;
+import de.tudresden.mobilis.services.geotwitter.beans.getTreasureContentResponse;
+import de.tudresden.mobilis.services.geotwitter.beans.pushNewTreasure;
+import de.tudresden.mobilis.services.geotwitter.beans.sendTreasureList;
+import de.tudresden.mobilis.services.geotwitter.beans.updateLocation;
+import de.tudresden.mobilis.services.geotwitter.helpers.BeanProcessor;
+import de.tudresden.mobilis.services.geotwitter.helpers.SqlHelper;
 
+/**
+ * @author MARCHELLO, Marian Seliuchenko
+ * Email: egur2006@yandex.ru
+ * Last modified: 15.05.2013
+ */
 
 public class GeoTwitter extends MobilisService  {
 
 	private GeoTwitterServiceProxy _proxy;
 	private DoubleKeyMap< String, String, XMPPBean > _beanPrototypes
 	= new DoubleKeyMap< String, String, XMPPBean >( false );
-	
-	public Database DB;
+
 	private BeanProcessor beanProcessor;
 	private Timer timer;
-	private Date time;
+	private SqlHelper db;
+	FileTransferManager fm;
+
 
 	public GeoTwitter(){
 		_proxy = new GeoTwitterServiceProxy(IGeoTwitterServiceOutgoingStub);
-		DB = new Database();
-		beanProcessor = new BeanProcessor(DB);
-		time = new Date();
+		db = new SqlHelper();
+		beanProcessor = new BeanProcessor(this);
 		timer = new Timer();
 		TimerTask task = new TimerTask() {
-
+			int i = 0;
 			@Override
 			public void run() {
 				// TODO Auto-generated method stub
-				DB.clearOnlineUserList();
-				getAgent().getConnection().sendPacket(new BeanIQAdapter(new sendTreasureList()));
+				db.UpdateOnlineUserList();
 			}
 		};
-	//	timer.schedule(task, 1000, 5000);
+		timer.schedule(task, 10000, 30000);
 
 	}
+
+	public SqlHelper getDB(){
+		return this.db;
+	}
+
 
 	private IGeoTwitterServiceOutgoing IGeoTwitterServiceOutgoingStub = new IGeoTwitterServiceOutgoing(){
 
@@ -68,7 +81,7 @@ public class GeoTwitter extends MobilisService  {
 		public void sendXMPPBean(XMPPBean out,
 				IXMPPCallback<? extends XMPPBean> callback) {
 			// TODO Auto-generated method stub
-			
+
 		}
 
 	};
@@ -91,7 +104,10 @@ public class GeoTwitter extends MobilisService  {
 		IQListener iqListener = new IQListener();
 		PacketTypeFilter locFil = new PacketTypeFilter(IQ.class);
 		getAgent().getConnection().addPacketListener(iqListener, locFil);
+
 	}
+
+
 
 	private class IQListener implements PacketListener {
 		@Override
@@ -109,19 +125,7 @@ public class GeoTwitter extends MobilisService  {
 						response.setTo(request.getFrom());
 						response.setFrom(getAgent().getJid());
 						_proxy.getBindingStub().sendXMPPBean(response);
-						if(response.getErrortype()>0){
-							Iterator<User> it = DB.getOnlineUserList().iterator();
-							Treasure treasure = request.getTreasure();
-							treasure.setTreasureID(response.getErrortype());
-							while(it.hasNext()){
-								String jid = it.next().jid;
-								if(!jid.equals(request.getFrom())){
-									pushNewTreasure bean = new pushNewTreasure(treasure);
-									bean.setTo(jid);
-									_proxy.getBindingStub().sendXMPPBean(bean);
-								}
-							}	
-						}
+
 
 
 					}
@@ -138,7 +142,7 @@ public class GeoTwitter extends MobilisService  {
 						response.setTo(request.getFrom());
 						response.setFrom(getAgent().getJid());
 						_proxy.getBindingStub().sendXMPPBean(response);
-						DB.addUserToOnlineList(request.getFrom());
+						db.setUserOnline(request.getFrom());
 					}
 				}
 			}
@@ -146,5 +150,7 @@ public class GeoTwitter extends MobilisService  {
 		};
 
 	}
+
+
 
 }

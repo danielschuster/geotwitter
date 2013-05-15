@@ -1,8 +1,6 @@
 package de.tudresden.mobilis.android.geotwitter.activities;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import android.app.ActionBar;
@@ -11,55 +9,54 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
-import android.widget.ViewFlipper;
 import de.tudresden.inf.rn.mobilis.mxa.MXAController;
 import de.tudresden.mobilis.android.geotwitter.adapters.ListTreasureAdapter;
 import de.tudresden.mobilis.android.geotwitter.beans.Treasure;
-import de.tudresden.mobilis.android.geotwitter.engine.DatabaseHandler;
-import de.tudresden.mobilis.android.geotwitter.engine.Singleton;
-import android.location.Geocoder;
+import de.tudresden.mobilis.android.geotwitter.engine.GeoTwitterManager;
 
+/**
+ * 
+ * @author Marian Seliuchenko
+ *
+ */
 public class TreasuresListActivity extends ListActivity {
 
 
 	ListTreasureAdapter listAdapter;
 	List<Treasure> treasures;
-	Singleton mSingleton;
-	ActionBar ab;
-	LinearLayout screen;
-	ViewFlipper flipper;
+	
+	GeoTwitterManager mGeoTwitterManager;
+	
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.treasures_list_layout);
-		mSingleton = Singleton.getInstance();
-		mSingleton.mMXAController = MXAController.get();
-		mSingleton.mMXAController.connectMXA(getApplication().getApplicationContext(), mSingleton);
-		mSingleton.createDatabase(getApplicationContext());
-		mSingleton.openDatabase().clearTreasures();
-		startService(new Intent(TreasuresListActivity.this,SimpleService.class));
-		UIInitialization();
-/*	
-		ab = getActionBar();
-		ab.setDisplayShowCustomEnabled(true);
-		ab.setDisplayShowTitleEnabled(true);
-		ab.setDisplayShowHomeEnabled(true);
-		ab.setHomeButtonEnabled(true);
-		ab.setIcon(R.drawable.ic_treasure);
-		ab.setBackgroundDrawable(getResources().getDrawable(R.drawable.action_bar_background));
-		ab.setTitle("Treasures around");
-		 */
+		mGeoTwitterManager = GeoTwitterManager.getInstance();
+		if(savedInstanceState==null){
+			mGeoTwitterManager.mMXAController = MXAController.get();
+			mGeoTwitterManager.mMXAController.connectMXA(getApplication().getApplicationContext(), mGeoTwitterManager);
+			mGeoTwitterManager.createDatabase(getApplicationContext());
+			mGeoTwitterManager.openDatabase().clearTables();
+			startService(new Intent(TreasuresListActivity.this,GeoTwitterService.class));
+			UIInitialization();
+		}
 
 	}
-
+	
+	public void UIInitialization(){
+		treasures = new ArrayList<Treasure>();
+		refreshList();
+	}
+	
+	
+	
+	
 
 	private Handler onReceived = new Handler(){
 		@Override
@@ -68,20 +65,20 @@ public class TreasuresListActivity extends ListActivity {
 			if (msg.obj instanceof String){
 				if(msg.obj.equals("DatabaseUpdated")){
 					refreshList();	
-					Log.i("TreasureListActivity", "LIST REFRESHED!!!");
+
 				}
 			}
 		}
 	};
 
 	public void refreshList(){
-		
-
-		listAdapter = new ListTreasureAdapter(getApplicationContext(),mSingleton.openDatabase().getAllTreasures() , R.layout.element_list_treasure);
+		listAdapter = new ListTreasureAdapter(getApplicationContext(),mGeoTwitterManager.openDatabase().getTreasuresList() , R.layout.element_list_treasure);
 		this.setListAdapter(listAdapter);
 		listAdapter.notifyDataSetChanged();
 
 	}
+	
+	
 
 	@Override
 	public void onListItemClick(ListView l, View v, int position, long id){
@@ -90,34 +87,37 @@ public class TreasuresListActivity extends ListActivity {
 		Intent showQuestionActivityIntent = new Intent(TreasuresListActivity.this,ShowTreasureActivity.class);
 		showQuestionActivityIntent.putExtra("TreasureSelected", treasureSelected);
 		startActivity(showQuestionActivityIntent);
-
 	}
 
 	@Override
 	public void onResume(){
 		super.onResume();
-		mSingleton.registerHandler(onReceived);
+		mGeoTwitterManager.registerHandler(onReceived);
+		refreshList();
+
 	}
 
 	@Override
 	public void onPause(){
 		super.onPause();
-		mSingleton.unRegisterHandler(onReceived);
+		mGeoTwitterManager.unRegisterHandler(onReceived);
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+		outState.putBoolean("RestartedDueToConfigurationChanges", true);
 	}
 
 	@Override
 	public void onDestroy(){
 		super.onDestroy();
-		stopService(new Intent(TreasuresListActivity.this,SimpleService.class));
-		mSingleton.openDatabase().close();
+		stopService(new Intent(TreasuresListActivity.this,GeoTwitterService.class));
+		//mGeoTwitterManager.openDatabase().close();
 	}
 
-	public void UIInitialization(){
-		treasures = new ArrayList<Treasure>();
-		listAdapter = new ListTreasureAdapter(getApplicationContext(), treasures, R.layout.element_list_treasure);
-		this.setListAdapter(listAdapter);
-		listAdapter.notifyDataSetChanged();
-	}
+	
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -125,9 +125,8 @@ public class TreasuresListActivity extends ListActivity {
 		case R.id.menu_add_treasure:
 			startActivity(new Intent(TreasuresListActivity.this,CreateTreasureActivity.class));
 			return true;
-
 		case R.id.item_Search:
-			Toast.makeText(getApplicationContext(), "Searching!", Toast.LENGTH_SHORT).show();
+			
 			return true;
 		case R.id.item_ViewSwitch:
 			startActivity(new Intent(TreasuresListActivity.this,MapActivity.class).addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT));

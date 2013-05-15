@@ -1,17 +1,13 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/activity_background"
-    tools:context=".ShowTreasureActivity" >
+    android:orientation="vertical" >
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/textView_Name"
         android:scaleType="fitXY"
         android:src="@drawable/separator_line" />
 
@@ -19,76 +15,178 @@
         android:id="@+id/textView_Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="18dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
         android:text="Treasure Name:"
         android:textSize="22sp" />
 
-    <TextView
-        android:id="@+id/textView_Date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/textView_Author"
-        android:layout_marginLeft="27dp"
-        android:text="Date" />
-
     <ImageView
         android:id="@+id/ImageView01"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/textView_Date"
-        android:layout_marginTop="14dp"
         android:scaleType="fitXY"
         android:src="@drawable/separator_line" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="0.97"
+            android:text="Address"
+            android:textSize="18sp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/textView_Distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="TextView"
+            android:textStyle="italic" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/textView_Address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.97"
+            android:text="Address"
+            android:textSize="14sp" />
+
+        <ImageButton
+            android:id="@+id/imageButton_Map"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="10dp"
+            android:background="@null"
+            android:src="@drawable/ic_map_transp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/TextView01"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:text="Description"
+        android:textSize="18sp"
+        android:textStyle="bold|italic" />
+
     <TextView
         android:id="@+id/textView_Description"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView_Date"
-        android:layout_below="@+id/imageView_Content"
-        android:layout_marginTop="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="0dp"
         android:text="Description" />
 
-    <ImageView
-        android:id="@+id/imageView_Content"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/TextView02"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView_Description"
-        android:layout_centerVertical="true"
-        android:src="@drawable/add_treasure" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:text="Author"
+        android:textSize="18sp"
+        android:textStyle="bold|italic" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <TextView
+            android:id="@+id/textView_AuthorTD"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_weight="0.97"
+            android:text="Author"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <ImageButton
+                android:id="@+id/ImageButton_AuthorState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_marginRight="10dp"
+                android:layout_weight="0"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ink_and_pen" />
+
+            <TextView
+                android:id="@+id/textView_Link"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:layout_weight="0"
+                android:text="Send File"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+    </LinearLayout>
 
     <TextView
-        android:id="@+id/textView_Distance"
-        android:layout_width="wrap_content"
+        android:id="@+id/TextView05"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView_Author"
-        android:layout_below="@+id/imageView1"
-        android:layout_marginTop="17dp"
-        android:text="Distance"
-        android:textSize="18sp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:text="Date"
+        android:textSize="18sp"
+        android:textStyle="bold|italic" />
 
     <TextView
-        android:id="@+id/textView_Author"
-        android:layout_width="wrap_content"
+        android:id="@+id/textView_DateTD"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView_Date"
-        android:layout_below="@+id/textView_Distance"
-        android:layout_marginTop="23dp"
-        android:text="Author" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="0dp"
+        android:text="Description" />
 
-    <ImageButton
-        android:id="@+id/imageButton_Map"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/TextView03"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/textView_Distance"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="21dp"
-        android:background="@null"
-        android:src="@drawable/ic_map_transp" />
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:text="Image"
+        android:textSize="18sp"
+        android:textStyle="bold|italic" />
 
-</RelativeLayout>
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <ImageView
+            android:id="@+id/imageView_Content"
+            android:layout_width="match_parent"
+            android:layout_height="141dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="0.61"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_treasure" />
+    </ScrollView>
+
+</LinearLayout>

@@ -10,14 +10,14 @@
         android:id="@+id/item_Search"
         android:icon="@drawable/ic_search_blue"
         android:showAsAction="always"
-        android:title="item_search">
+        android:title="Search...">
     </item>
     
     <item
         android:id="@+id/item_ViewSwitch"
         android:icon="@drawable/ic_map_transp"
         android:showAsAction="always"
-        android:title="item_search">
+        android:title="Map View">
     </item>
 
 </menu>

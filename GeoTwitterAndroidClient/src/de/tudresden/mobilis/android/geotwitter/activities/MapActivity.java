@@ -37,15 +37,23 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import de.tudresden.mobilis.android.geotwitter.beans.Treasure;
-import de.tudresden.mobilis.android.geotwitter.engine.Singleton;
+import de.tudresden.mobilis.android.geotwitter.engine.GeoTwitterManager;
+
+/**
+ * 
+ * @author Marian Seliuchenko
+ *
+ */
 
 
 public class MapActivity extends FragmentActivity{
+	
 	private GoogleMap googleMap;
-	Singleton mSingleton;
+	GeoTwitterManager mGeoTwitterManager;
 	List<Treasure> treasureList;
 	private LocationManager locationManager;
 	LatLng centerPoint = null;
+	locationListener myLocationListener = null;
 
 
 	@Override
@@ -53,9 +61,9 @@ public class MapActivity extends FragmentActivity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_map);
 		
-		mSingleton = Singleton.getInstance();
-		//	Toast.makeText(getApplicationContext(), ConvertPointToLocation(coordinates), Toast.LENGTH_SHORT).show();
-		centerPoint = mSingleton.getCurrentLocation();
+		mGeoTwitterManager = GeoTwitterManager.getInstance();
+		//Toast.makeText(getApplicationContext(), ConvertPointToLocation(coordinates), Toast.LENGTH_SHORT).show();
+		centerPoint = mGeoTwitterManager.getCurrentLocation();
 		MapInitialization();
 		Bundle bundle = getIntent().getExtras();
 		if(bundle!=null){
@@ -65,12 +73,6 @@ public class MapActivity extends FragmentActivity{
 		}else{
 			drawAllTreasures();
 		}
-
-
-			
-		
-
-
 
 	}
 	
@@ -103,7 +105,7 @@ public class MapActivity extends FragmentActivity{
 				// TODO Auto-generated method stub
 				TextView title = (TextView)view.findViewById(R.id.textView_MarkerTitle);
 				TextView description = (TextView)view.findViewById(R.id.textView_MarkerDescription);
-				treasure = mSingleton.openDatabase().getTreasure(Integer.parseInt(marker.getSnippet()));
+				treasure = mGeoTwitterManager.openDatabase().getTreasure(Integer.parseInt(marker.getSnippet()));
 				title.setText(treasure.getName());
 				description.setText(treasure.getDescription());
 				return view;
@@ -114,7 +116,7 @@ public class MapActivity extends FragmentActivity{
 			@Override
 			public void onInfoWindowClick(Marker marker) {
 				// TODO Auto-generated method stub
-				Treasure treasure = mSingleton.openDatabase().getTreasure(Integer.parseInt(marker.getSnippet()));
+				Treasure treasure = mGeoTwitterManager.openDatabase().getTreasure(Integer.parseInt(marker.getSnippet()));
 				Intent intent = new Intent(MapActivity.this, ShowTreasureActivity.class);
 				intent.putExtra("TreasureSelected", treasure);
 				startActivity(intent);
@@ -122,11 +124,13 @@ public class MapActivity extends FragmentActivity{
 		});
 		
 	}
+	
+
 
 	
 
 	public void drawAllTreasures(){
-		treasureList = new ArrayList<Treasure>(mSingleton.openDatabase().getAllTreasures());
+		treasureList = new ArrayList<Treasure>(mGeoTwitterManager.openDatabase().getAllTreasures());
 		Iterator<Treasure> it = treasureList.iterator();
 		Treasure treasure = null;
 		while(it.hasNext()){
@@ -136,9 +140,10 @@ public class MapActivity extends FragmentActivity{
 			mo.title(treasure.getName());
 			mo.snippet(String.valueOf(treasure.getTreasureID()));
 			googleMap.addMarker(mo);
-			googleMap.moveCamera(CameraUpdateFactory.newLatLng(centerPoint));
-			googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+			
 		}
+		googleMap.moveCamera(CameraUpdateFactory.newLatLng(centerPoint));
+		googleMap.animateCamera(CameraUpdateFactory.zoomTo(15));
 	}
 	
 	public void drawTreasure(Treasure treasure){
@@ -180,8 +185,21 @@ public class MapActivity extends FragmentActivity{
 
 		return true;
 	}
+
 	
-	locationListener myLocationListener = null;
+	@Override
+	protected void onNewIntent(Intent intent){
+		Toast.makeText(getApplicationContext(), "Analazying!!!!", Toast.LENGTH_LONG).show();
+		Bundle bundle = intent.getExtras();
+		if(bundle!=null){
+			if(bundle.containsKey("TreasureToPointOn")){
+				Treasure treasure = (Treasure) intent.getExtras().get("TreasureToPointOn");
+				LatLng position = new LatLng(treasure.getLocation().getLatitude(),treasure.getLocation().getLongitude());
+				googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
+			}
+		}
+		
+	}
 
 	@Override
 	public void onResume(){
@@ -213,24 +231,27 @@ public class MapActivity extends FragmentActivity{
 		}
 
 		@Override
-		public void onProviderDisabled(String provider) {
+		public void onProviderDisabled(String arg0) {
 			// TODO Auto-generated method stub
-
+			
 		}
 
 		@Override
-		public void onProviderEnabled(String provider) {
+		public void onProviderEnabled(String arg0) {
 			// TODO Auto-generated method stub
-
+			
 		}
 
 		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras) {
+		public void onStatusChanged(String arg0, int arg1, Bundle arg2) {
 			// TODO Auto-generated method stub
-
+			
 		}
+
 
 	}
+	
+
 	
 	public String ConvertPointToLocation(LatLng point) {   
 	    String address = "";
@@ -253,28 +274,6 @@ public class MapActivity extends FragmentActivity{
 	    
 	    return address;
 	  } 
-	
-	@Override
-	protected void onNewIntent(Intent intent){
-		Toast.makeText(getApplicationContext(), "Analazying!!!!", Toast.LENGTH_LONG).show();
-		Log.i("MAPACTIVITY!", "ANALAZYNG!");
-		Bundle bundle = intent.getExtras();
-		if(bundle!=null){
-			if(bundle.containsKey("TreasureToPointOn")){
-				Treasure treasure = (Treasure) intent.getExtras().get("TreasureToPointOn");
-				LatLng position = new LatLng(treasure.getLocation().getLatitude(),treasure.getLocation().getLongitude());
-				googleMap.moveCamera(CameraUpdateFactory.newLatLng(position));
-			}
-		}
-		
-	}
-	
-	@Override
-	public void onDestroy(){
-		super.onDestroy();
-		Log.i("MAPACTIVITY!", "DESTROYED!!!");
-	}
-
 
 
 }
