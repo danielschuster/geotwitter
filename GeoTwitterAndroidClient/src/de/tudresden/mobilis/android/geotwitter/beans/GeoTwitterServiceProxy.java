@@ -1,6 +1,4 @@
-package de.tudresden.mobilis.android.geotwitter.beans;
-
-import java.util.List;import java.util.ArrayList;public class GeoTwitterServiceProxy {
+package de.tudresden.mobilis.android.geotwitter.beans;public class GeoTwitterServiceProxy {
 
 	private IGeoTwitterServiceOutgoing _bindingStub;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2010 Technische Universit�t Dresden
+ * Copyright (C) 2010 Technische Universität Dresden
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,17 +31,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.spi.DateFormatProvider;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.*;
-import java.io.*;
 
 import org.jivesoftware.smack.util.Base64;
-
 
 import de.tudresden.mobilis.services.geotwitter.beans.LocationBean;
 import de.tudresden.mobilis.services.geotwitter.beans.Treasure;
@@ -74,13 +68,13 @@ public class SqlHelper {
 	private String mServerPort = "3306";
 
 	/** The name for the XHunt database. */
-	private String mDbName = "marian";
+	private String mDbName = "geotwitter";
 
 	/** The username to log in into the database. */
-	private String mDbUsername = "marian";
+	private String mDbUsername = "mobilis";
 
 	/** The password to log in into the database. */
-	private String mDbPassword = "jobanujbabaj";
+	private String mDbPassword = "mobilis";
 
 	/** The name of the TABLE_AREA. */
 	private static final String TABLE_TREASURE_LIST = "TreasureList";

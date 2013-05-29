@@ -5,8 +5,6 @@ import java.util.List;
 
 
 import android.content.Context;
-import android.location.Location;
-import android.location.LocationProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

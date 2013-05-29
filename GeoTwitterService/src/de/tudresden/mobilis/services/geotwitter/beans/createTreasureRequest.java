@@ -3,8 +3,6 @@ package de.tudresden.mobilis.services.geotwitter.beans;
 import org.xmlpull.v1.XmlPullParser;
 import de.tudresden.inf.rn.mobilis.xmpp.beans.XMPPBean;
 
-import java.util.List;import java.util.ArrayList;
-
 public class createTreasureRequest extends XMPPBean {
 
 	private Treasure treasure = new Treasure();

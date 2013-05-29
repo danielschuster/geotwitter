@@ -123,7 +123,7 @@ public class GeoTwitter extends MobilisService  {
 						createTreasureRequest request = (createTreasureRequest)proxyBean.parsePayload(new createTreasureRequest());
 						createTreasureResponse response = beanProcessor.processCreateTreasureRequest(request);
 						response.setTo(request.getFrom());
-						response.setFrom(getAgent().getJid());
+						response.setFrom(getAgent().getFullJid());
 						_proxy.getBindingStub().sendXMPPBean(response);
 
 
@@ -133,14 +133,14 @@ public class GeoTwitter extends MobilisService  {
 						getTreasureContentRequest request = (getTreasureContentRequest)proxyBean.parsePayload(new getTreasureContentRequest());
 						getTreasureContentResponse response = beanProcessor.processgetTreasureContentRequest(request);
 						response.setTo(request.getFrom());
-						response.setFrom(getAgent().getJid());
+						response.setFrom(getAgent().getFullJid());
 						_proxy.getBindingStub().sendXMPPBean(response);
 					}
 					if(proxyBean.isTypeOf(updateLocation.NAMESPACE, updateLocation.CHILD_ELEMENT)){
 						updateLocation request = (updateLocation)proxyBean.parsePayload(new updateLocation());
 						sendTreasureList response = beanProcessor.processUpdateLocation(request);
 						response.setTo(request.getFrom());
-						response.setFrom(getAgent().getJid());
+						response.setFrom(getAgent().getFullJid());
 						_proxy.getBindingStub().sendXMPPBean(response);
 						db.setUserOnline(request.getFrom());
 					}

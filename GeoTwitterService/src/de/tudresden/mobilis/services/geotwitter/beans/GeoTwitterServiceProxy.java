@@ -1,6 +1,6 @@
 package de.tudresden.mobilis.services.geotwitter.beans;
 
-import java.util.List;import java.util.ArrayList;public class GeoTwitterServiceProxy {
+public class GeoTwitterServiceProxy {
 
 	private IGeoTwitterServiceOutgoing _bindingStub;
 

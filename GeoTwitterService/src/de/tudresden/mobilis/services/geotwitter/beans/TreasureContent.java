@@ -3,8 +3,6 @@ package de.tudresden.mobilis.services.geotwitter.beans;
 import org.xmlpull.v1.XmlPullParser;
 import de.tudresden.inf.rn.mobilis.xmpp.beans.XMPPInfo;
 
-import java.util.List;import java.util.ArrayList;
-
 public class TreasureContent implements XMPPInfo {
 
 	private int treasureID = Integer.MIN_VALUE;

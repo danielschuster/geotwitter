@@ -21,7 +21,6 @@ import com.google.android.gms.maps.model.LatLng;
 import de.tudresden.inf.rn.mobilis.mxa.IXMPPService;
 import de.tudresden.inf.rn.mobilis.mxa.MXAController;
 import de.tudresden.inf.rn.mobilis.mxa.MXAListener;
-import de.tudresden.inf.rn.mobilis.mxa.callbacks.IChatStateCallback;
 import de.tudresden.inf.rn.mobilis.mxa.callbacks.IXMPPIQCallback;
 import de.tudresden.inf.rn.mobilis.mxa.parcelable.XMPPIQ;
 import de.tudresden.inf.rn.mobilis.xmpp.beans.XMPPBean;

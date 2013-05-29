@@ -3,8 +3,6 @@ package de.tudresden.mobilis.android.geotwitter.beans;
 import org.xmlpull.v1.XmlPullParser;
 import de.tudresden.inf.rn.mobilis.xmpp.beans.XMPPInfo;
 
-import java.util.List;import java.util.ArrayList;
-
 public class LocationBean implements XMPPInfo {
 
 	private double longitude = Double.MIN_VALUE;

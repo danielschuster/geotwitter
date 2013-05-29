@@ -1,7 +1,6 @@
 package de.tudresden.mobilis.android.geotwitter.activities;
 
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.ContentObserver;

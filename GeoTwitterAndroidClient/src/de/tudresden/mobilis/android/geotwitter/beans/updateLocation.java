@@ -3,8 +3,6 @@ package de.tudresden.mobilis.android.geotwitter.beans;
 import org.xmlpull.v1.XmlPullParser;
 import de.tudresden.inf.rn.mobilis.xmpp.beans.XMPPBean;
 
-import java.util.List;import java.util.ArrayList;
-
 public class updateLocation extends XMPPBean {
 
 	private LocationBean locationBean = new LocationBean();
