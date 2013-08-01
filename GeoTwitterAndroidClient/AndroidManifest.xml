@@ -66,6 +66,16 @@
             android:name="de.tudresden.mobilis.android.geotwitter.activities.ChatActivity"
             android:label="@string/title_activity_chat" >
         </activity>
+        
+        <provider
+            android:name="de.tudresden.inf.rn.mobilis.mxa.provider.RosterProvider"
+            android:authorities="de.tudresden.inf.rn.mobilis.mxa.provider.roster.geotwitter" android:exported="false" >
+        </provider>
+
+        <provider
+            android:name="de.tudresden.inf.rn.mobilis.mxa.provider.MessageProvider"
+            android:authorities="de.tudresden.inf.rn.mobilis.mxa.provider.messages.geotwitter" android:exported="false">
+        </provider>
     </application>
 
 </manifest>

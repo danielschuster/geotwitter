@@ -1,6 +1,7 @@
 package de.tudresden.mobilis.android.geotwitter.activities;
 
 
+import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.ContentObserver;
@@ -198,7 +199,7 @@ public class ShowTreasureActivity extends Activity {
 	};
 	
 	private void refreshUserStateList(String resource) {
-		cursor= getContentResolver().query(RosterItems.CONTENT_URI,null, null,
+		cursor= getContentResolver().query(RosterItems.contentUri,null, null,
 				null, RosterItems.XMPP_ID+" ASC, "+RosterItems.RESSOURCE+" ASC");
 				startManagingCursor(cursor);
 		if(cursor!=null){
@@ -238,7 +239,7 @@ public class ShowTreasureActivity extends Activity {
 		mGeoTwitterManager.registerHandler(onReceivedShowTreasure);
 		refreshUserStateList(treasure.getAuthor());
 		UserStateObserver mObserver = new UserStateObserver(onCursorChanged);
-		getContentResolver().registerContentObserver(RosterItems.CONTENT_URI, true, mObserver);
+		getContentResolver().registerContentObserver(RosterItems.contentUri, true, mObserver);
 		startManagingCursor(cursor);
 
 	}

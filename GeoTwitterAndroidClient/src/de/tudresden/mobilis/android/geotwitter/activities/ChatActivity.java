@@ -87,7 +87,7 @@ public class ChatActivity extends Activity{
 				+"' AND "
 				+MessageItems.RECIPIENT+"='"+PartnerJID+"')) AND "+MessageItems.BODY+"<>'') ");
 		String helper=sb.toString();
-		msgCursor = getContentResolver().query(MessageItems.CONTENT_URI,
+		msgCursor = getContentResolver().query(MessageItems.contentUri,
 				new String[]{MessageItems._ID,MessageItems.SENDER,MessageItems.RECIPIENT,MessageItems.BODY},helper, null, MessageItems.DATE_SENT);
 		startManagingCursor(msgCursor);
 

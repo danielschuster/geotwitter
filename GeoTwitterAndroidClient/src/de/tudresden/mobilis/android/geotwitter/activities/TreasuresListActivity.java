@@ -3,6 +3,7 @@ package de.tudresden.mobilis.android.geotwitter.activities;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActionBar;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ public class TreasuresListActivity extends ListActivity {
 		if(savedInstanceState==null){
 			mGeoTwitterManager.mMXAController = MXAController.get();
 			mGeoTwitterManager.mMXAController.connectMXA(getApplication().getApplicationContext(), mGeoTwitterManager);
+			
 			mGeoTwitterManager.createDatabase(getApplicationContext());
 			mGeoTwitterManager.openDatabase().clearTables();
 			startService(new Intent(TreasuresListActivity.this,GeoTwitterService.class));
